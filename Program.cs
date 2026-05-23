@@ -1,56 +1,26 @@
 using System;
 using System.IO;
-using System.Net;
-using System.Runtime.Serialization;
-using System.Security.Authentication;
-using System.Security.Cryptography;
-using System.Threading;
+using UpgradeDemo.Services;
 
-// SYSLIB0051 — obsolete exception serialization constructor pattern
-public class MyException : Exception
+namespace UpgradeDemo
 {
-    protected MyException(SerializationInfo info, StreamingContext ctx) : base(info, ctx) { }
-}
-
-class Program
-{
-    static void Main(string[] args)
+    class Program
     {
-        using var stream = new MemoryStream();
-        object obj = new object();
+        static void Main(string[] args)
+        {
+            var crypto = new CryptoService();
+            var network = new NetworkService();
+            var data = new DataService();
 
-        // SYSLIB0011 — BinaryFormatter
-        var bf = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-        bf.Serialize(stream, obj);
+            crypto.GenerateToken(32);
+            network.FetchRemoteConfig("https://example.com/config");
+            network.GetAllowedProtocols();
 
-        // SYSLIB0006 — Thread.Abort
-        var t = new Thread(() => { });
-        t.Abort();
+            using var stream = new MemoryStream();
+            data.PersistSnapshot(new object(), stream);
+            data.AbortBackgroundSync();
 
-        // SYSLIB0014 — WebClient
-        var wc = new WebClient();
-        wc.DownloadString("https://example.com");
-
-        // SYSLIB0023 — RNGCryptoServiceProvider
-        using var rng = new RNGCryptoServiceProvider();
-
-        // SYSLIB0021 + SYSLIB0041 — DES.Create / TripleDES.Create
-        var des = DES.Create();
-        var triple = TripleDES.Create();
-
-        // SYSLIB0022 — RijndaelManaged
-        var r = new RijndaelManaged();
-
-        // SYSLIB0013 — Uri.EscapeUriString
-        var s = Uri.EscapeUriString("hello world");
-
-        // SYSLIB0039 — TLS 1.0 / 1.1 SslProtocols enum values
-        var protocols = SslProtocols.Tls | SslProtocols.Tls11;
-
-        Console.WriteLine("UpgradeDemo running.");
-
-        des.Dispose();
-        triple.Dispose();
-        r.Dispose();
+            Console.WriteLine("UpgradeDemo running.");
+        }
     }
 }
