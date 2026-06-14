@@ -1,5 +1,5 @@
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
 using System.Threading;
 
 namespace UpgradeDemo.Services
@@ -8,8 +8,7 @@ namespace UpgradeDemo.Services
     {
         public void PersistSnapshot(object obj, Stream stream)
         {
-            var formatter = new BinaryFormatter();
-            formatter.Serialize(stream, obj);
+            JsonSerializer.Serialize(stream, obj, obj.GetType());
         }
 
         public void AbortBackgroundSync()

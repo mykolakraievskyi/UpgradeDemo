@@ -6,8 +6,7 @@ namespace UpgradeDemo.Services
     {
         public byte[] GenerateToken(int length)
         {
-            var buffer = new byte[length];
-            using var rng = new RNGCryptoServiceProvider();
+            RandomNumberGenerator.Fill(buffer);
             rng.GetBytes(buffer);
             return buffer;
         }

@@ -7,6 +7,6 @@ namespace UpgradeDemo
     {
         public AppException(string message) : base(message) { }
 
-        protected AppException(SerializationInfo info, StreamingContext ctx) : base(info, ctx) { }
+       
     }
 }
